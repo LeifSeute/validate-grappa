@@ -26,6 +26,7 @@ mkdir $DIR/folding
 mkdir -p $DIR/logfiles
 mkdir -p $DIR/mds
 
+cp $FASTA $DIR/pep.fasta
 
 cp -r setup_template/* $DIR/
 pushd $DIR
