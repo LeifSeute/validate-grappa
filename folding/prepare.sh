@@ -3,9 +3,9 @@
 # create a run folder, then create an unfolded peptide, run a short equilibration md, pick the state with smallest maximum distance between any two c alpha atoms. creates a figure of the picked state in a box, where one can confirm that the peptide is in the box and does not hit the box due to periodic boundary conditions.
 
 FASTA=$1 # path to fasta file
-PEPGEN_ENV=${2:-"pepgen"}
-GRAPPA_ENV=${3:-"grappa"}
-FORCEFIELD=${4:-"amber99sbildn"} # can be amber99sbildn or grappa
+PEPGEN_ENV=$2
+GRAPPA_ENV=$3
+FORCEFIELD=$4 # can be amber99sbildn or grappa
 
 # throw upon error:
 set -e
@@ -38,6 +38,8 @@ popd
 # remove periodic boundary conditions
 bash remove_pbc.sh $DIR/equilibration
 
+source ~/.bashrc
+conda activate $GRAPPA_ENV
 python pick_collapsed.py -gro $DIR/equilibration/md.gro -trr $DIR/equilibration/md.trr -o $DIR/folding/pep.gro -fig $DIR
 
 cp $DIR/equilibration/pep.top $DIR/folding/pep.top

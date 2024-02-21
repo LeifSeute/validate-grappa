@@ -3,8 +3,8 @@
 set -e
 
 FASTA="chignolin.fasta"
-PEPGEN_ENV={$1:-"pepgen"}
-GRAPPA_ENV={$2:-"casc_grappa_gromacs"}
+PEPGEN_ENV=pepgen
+GRAPPA_ENV=casc_grappa_gromacs
 
 bash prepare.sh $FASTA $PEPGEN_ENV $GRAPPA_ENV amber99sbildn > prepare_chignolin.log
 
