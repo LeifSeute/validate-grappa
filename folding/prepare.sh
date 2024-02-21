@@ -25,6 +25,7 @@ mkdir $DIR
 mkdir $DIR/folding
 mkdir -p $DIR/logfiles
 mkdir -p $DIR/mds
+mkdir -p $DIR/figures
 
 cp $FASTA $DIR/pep.fasta
 
@@ -41,10 +42,10 @@ bash remove_pbc.sh $DIR/equilibration
 
 source ~/.bashrc
 conda activate $GRAPPA_ENV
-python pick_collapsed.py -gro $DIR/equilibration/md.gro -trr $DIR/equilibration/md.trr -o $DIR/folding/pep.gro -fig $DIR
+python pick_collapsed.py -gro $DIR/equilibration/md.gro -trr $DIR/equilibration/md_centered.trr -o $DIR/folding/pep.gro -fig $DIR/figures
 
 cp $DIR/equilibration/pep.top $DIR/folding/pep.top
 
-echo finished equilibration. take a look at the figures $DIR/collapsed_structure.png
+echo finished equilibration. take a look at the figures $DIR/figures/collapsed_structure.png
 
 echo if the peptide is in the box, without periodic boundary condition effects that make it look like it is outside the box, then you can proceed with the folding simulations by running sbatch -J jobname submit_continue.sh taskid box_side

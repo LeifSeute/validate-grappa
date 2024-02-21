@@ -52,7 +52,7 @@ printf "6\n1\n "|gmx pdb2gmx -f pep.pdb -o pep.gro -p pep.top -ignh
 if [ $FORCEFIELD == "grappa" ]; then
     # parametrize with grappa
     mv pep.top pep_amber99sbildn.top
-    grappa_gmx -f pep_amber99sbildn.top -o pep.top -t grappa-1.1.0 -c classical
+    grappa_gmx -f pep_amber99sbildn.gro -o pep.top -t grappa-1.0.0 -c classical
 fi
 
 # run mds

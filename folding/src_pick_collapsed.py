@@ -4,12 +4,13 @@ PICK THE FRAME WITH THE SMALLEST MAXIMUM DISTANCES BETWEEN TWO ATOMS OF THE PROT
 #%%
 import MDAnalysis as mda
 import numpy as np
-import matplotlib.pyplot as plt
-import copy
 from pathlib import Path
+from copy import deepcopy
+
 
 def pick_smallest(gro_path, trr_path, collapsed_gro_path, figdir=None):
 
+    print(f"Loading trajectory from {trr_path}")
     # Load the trajectory and topology
     u = mda.Universe(gro_path, trr_path)
 
@@ -17,10 +18,14 @@ def pick_smallest(gro_path, trr_path, collapsed_gro_path, figdir=None):
 
     c_alphas = protein.select_atoms("name CA")
 
-    all_ca_positions = copy.deepcopy(np.array([
+    all_ca_positions = deepcopy(np.array([
         c_alphas.positions
         for _ in u.trajectory
     ]))
+
+    print(f"Loaded {len(all_ca_positions)} frames")
+
+    print(f"Calculating maximum distances between C-alpha atoms...")
 
     # calculate the maximum distance between any two atoms in the protein: (this is inefficient, upper triangular matrix etc would be better)
     max_distances = np.max(np.max(np.linalg.norm(all_ca_positions[:, :, np.newaxis] - all_ca_positions[:, np.newaxis], axis=-1), axis=-1), axis=-1)
@@ -39,7 +44,13 @@ def pick_smallest(gro_path, trr_path, collapsed_gro_path, figdir=None):
     print(f"Wrote collapsed_structure to {collapsed_gro_path}")
 
     if not figdir is None:
+        
+        import matplotlib.pyplot as plt
+        from mpl_toolkits.mplot3d import Axes3D
+
         figdir = Path(figdir)
+        if not figdir.exists():
+            figdir.mkdir(parents=True)
         print("VALIDATION: Check that the state is in the box")
 
         # # Plotting
@@ -81,13 +92,11 @@ def pick_smallest(gro_path, trr_path, collapsed_gro_path, figdir=None):
         # plt.title("Collapsed protein structure")
         # plt.show()
 
-        from mpl_toolkits.mplot3d import Axes3D
-        import copy
 
-        positions = copy.deepcopy(ts.positions)
-        protein_positions = copy.deepcopy(protein.positions)
+        positions = deepcopy(ts.positions)
+        protein_positions = deepcopy(protein.positions)
         c_alphas = protein.select_atoms("name CA")
-        c_alpha_positions = copy.deepcopy(c_alphas.positions)
+        c_alpha_positions = deepcopy(c_alphas.positions)
 
 
         fig = plt.figure()
@@ -108,7 +117,7 @@ def pick_smallest(gro_path, trr_path, collapsed_gro_path, figdir=None):
         plt.title(f"Collapsed protein with maximum C-alpha distance {max_distance:.2f} Angstrom")
         plt.legend(["All atoms", "Protein", "C-alphas"])
 
-        plt.savefig(figdir/"collapsed_structure.png")
+        plt.savefig(figdir/"collapsed_structure.png", dpi=500)
         # plt.show()
 
         first_atom = protein_positions[0]
