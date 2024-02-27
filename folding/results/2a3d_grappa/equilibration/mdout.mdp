@@ -2,7 +2,7 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: seutelf (7137)
 ;	On host: cascade-123.cluster
-;	At date: Tue Feb 27 08:29:15 2024
+;	At date: Tue Feb 27 10:37:20 2024
 ;
 ;	Created by:
 ;	                      :-) GROMACS - gmx grompp, 2023 (-:
@@ -11,7 +11,7 @@
 ;	Data prefix:  /hits/fast/mbm/broszms/software/gromacs-2023-cascade
 ;	Working dir:  /hits/fast/mbm/seutelf/md_simulation/validate_grappa/folding/results/2a3d_grappa/equilibration
 ;	Command line:
-;	  gmx grompp -f nvt.mdp -c pep_out_min.gro -p pep.top -o nvt.tpr
+;	  gmx grompp -f npt.mdp -c nvt.gro -p pep.top -o npt.tpr
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.
@@ -61,13 +61,13 @@ rtpi                     = 0.05
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 5000
-nstvout                  = 5000
+nstxout                  = 50000
+nstvout                  = 50000
 nstfout                  = 0
 ; Output frequency for energies to log file and energy file
-nstlog                   = 5000
+nstlog                   = 50000
 nstcalcenergy            = 100
-nstenergy                = 5000
+nstenergy                = 50000
 ; Output frequency and precision for .xtc file
 nstxout-compressed       = 0
 compressed-x-precision   = 1000
@@ -143,15 +143,15 @@ tc-grps                  = Protein Non-Protein
 tau_t                    = 0.1     0.1
 ref_t                    = 300     300
 ; pressure coupling     
-pcoupl                   = no
-pcoupltype               = Isotropic
-nstpcouple               = -1
+pcoupl                   = Parrinello-Rahman
+pcoupltype               = isotropic
+nstpcouple               = 20
 ; Time constant (ps), compressibility (1/bar) and reference P (bar)
-tau-p                    = 1
-compressibility          = 
-ref-p                    = 
+tau_p                    = 2.0
+compressibility          = 4.5e-5
+ref_p                    = 1.0
 ; Scaling of reference coordinates, No, All or COM
-refcoord-scaling         = No
+refcoord_scaling         = com
 
 ; OPTIONS FOR QMMM calculations
 QMMM                     = no
@@ -169,16 +169,16 @@ annealing-time           =
 annealing-temp           = 
 
 ; GENERATE VELOCITIES FOR STARTUP RUN
-gen_vel                  = yes
-gen_temp                 = 300
-gen_seed                 = -21498211
+gen_vel                  = no
+gen-temp                 = 300
+gen-seed                 = -99336
 
 ; OPTIONS FOR BONDS    
 constraints              = h-bonds
 ; Type of constraint algorithm
 constraint_algorithm     = lincs
 ; Do not constrain the start configuration
-continuation             = no
+continuation             = yes
 ; Use successive overrelaxation to reduce the number of shake iterations
 Shake-SOR                = no
 ; Relative tolerance of shake

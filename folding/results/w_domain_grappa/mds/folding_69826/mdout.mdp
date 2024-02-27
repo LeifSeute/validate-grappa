@@ -318,4 +318,4 @@ electric-field-z         = 0 0 0 0
 density-guided-simulation-active = false
 
 ; QM/MM with CP2K
-q
+qmmm-cp2k-active         = false

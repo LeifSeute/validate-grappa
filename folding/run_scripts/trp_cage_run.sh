@@ -32,5 +32,5 @@ for i in "${!JOB_NAMES[@]}"; do
     id="$BASE_ID"
     
     echo "Submitting job $i with ID $id and jobname $jobname..."
-    echo -J "$jobname" "submit_continue.sh" "$id" "$BOX_SIZE"
+    sbatch -J "$jobname" "submit_continue.sh" "$id" "$BOX_SIZE"
 done

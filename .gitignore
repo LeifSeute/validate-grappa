@@ -19,3 +19,7 @@
 
 **.png
 
+# python stuff:
+**.pyc
+__pycache__/
+**.pyo
