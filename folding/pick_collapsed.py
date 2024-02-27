@@ -1,4 +1,4 @@
-from src_pick_collapsed import pick_smallest
+from src.src_pick_collapsed import pick_smallest
 import argparse
 
 parser = argparse.ArgumentParser(description='PICK THE FRAME WITH THE SMALLEST MAXIMUM DISTANCES BETWEEN TWO ATOMS OF THE PROTEIN. THEN VALIDATE THAT THE STATE IS IN THE BOX AND SAVE IT AS A GRO FILE')

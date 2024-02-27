@@ -10,6 +10,7 @@ FORCEFIELD=$4 # can be amber99sbildn or grappa
 # throw upon error:
 set -e
 
+
 module load GCC/9.3.0
 module load CUDA/11.5.0
 
@@ -21,16 +22,17 @@ DIR=$(basename $FASTA .fasta)
 # concat the ff_name to the dir name:
 DIR=$DIR"_"$FORCEFIELD
 
-mkdir $DIR
-mkdir $DIR/folding
-mkdir -p $DIR/logfiles
-mkdir -p $DIR/mds
-mkdir -p $DIR/figures
+mkdir -p results
+mkdir results/$DIR
+mkdir results/$DIR/folding
+mkdir -p results/$DIR/logfiles
+mkdir -p results/$DIR/mds
+mkdir -p results/$DIR/figures
 
-cp $FASTA $DIR/pep.fasta
+cp $FASTA results/$DIR/pep.fasta
 
-cp -r setup_template/* $DIR/
-pushd $DIR
+cp -r setup_template/* results/$DIR/
+pushd results/$DIR
 
 bash create_peptide.sh $PEPGEN_ENV $GRAPPA_ENV $FORCEFIELD
 
@@ -38,14 +40,14 @@ bash create_peptide.sh $PEPGEN_ENV $GRAPPA_ENV $FORCEFIELD
 popd
 
 # remove periodic boundary conditions
-bash remove_pbc.sh $DIR/equilibration
+bash remove_pbc.sh results/$DIR/equilibration
 
 source ~/.bashrc
 conda activate $GRAPPA_ENV
-python pick_collapsed.py -gro $DIR/equilibration/md.gro -trr $DIR/equilibration/md_centered.trr -o $DIR/folding/pep.gro -fig $DIR/figures
+python pick_collapsed.py -gro results/$DIR/equilibration/md.gro -trr results/$DIR/equilibration/md_centered.trr -o results/$DIR/folding/pep.gro -fig results/$DIR/figures
 
-cp $DIR/equilibration/pep.top $DIR/folding/pep.top
+cp results/$DIR/equilibration/pep_unsolvated.top results/$DIR/folding/pep.top
 
-echo finished equilibration. take a look at the figures $DIR/figures/collapsed_structure.png
+echo finished equilibration. take a look at the figures results/$DIR/figures/collapsed_structure.png
 
-echo if the peptide is in the box, without periodic boundary condition effects that make it look like it is outside the box, then you can proceed with the folding simulations by running sbatch -J jobname submit_continue.sh taskid box_side
+echo if the peptide is in the box, without periodic boundary condition effects that make it look like it is outside the box, then you can proceed with the folding simulations by running sbatch -J jobname submit_continue.sh taskid box_side in results/$DIR

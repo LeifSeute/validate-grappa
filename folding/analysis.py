@@ -1,5 +1,5 @@
 # %%
-from .src_analysis import get_traj_paths, rmse_plot
+from src.src_analysis import get_traj_paths, rmse_plot
 import argparse
 
 parser = argparse.ArgumentParser(description='')
