@@ -23,3 +23,7 @@
 **.pyc
 __pycache__/
 **.pyo
+
+#vscode:
+.vscode/
+*.code-workspace

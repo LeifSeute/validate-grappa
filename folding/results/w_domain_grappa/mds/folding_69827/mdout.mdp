@@ -1,15 +1,15 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: seutelf (7137)
-;	On host: cascade-123.cluster
-;	At date: Tue Feb 27 01:26:32 2024
+;	By user: unknown (7137)
+;	On host: cascade-124.cluster
+;	At date: Tue Feb 27 10:49:09 2024
 ;
 ;	Created by:
 ;	                      :-) GROMACS - gmx grompp, 2023 (-:
 ;	
 ;	Executable:   /hits/fast/mbm/broszms/software/gromacs-2023-cascade/bin/gmx
 ;	Data prefix:  /hits/fast/mbm/broszms/software/gromacs-2023-cascade
-;	Working dir:  /hits/fast/mbm/seutelf/md_simulation/validate_grappa/folding/results/chignolin_amber99sbildn/mds/folding_
+;	Working dir:  /hits/fast/mbm/seutelf/md_simulation/validate_grappa/folding/results/w_domain_grappa/mds/folding_69827
 ;	Command line:
 ;	  gmx grompp -f md.mdp -c npt.gro -p pep.top -o md.tpr -maxwarn 2
 
@@ -171,7 +171,7 @@ annealing-temp           =
 ; GENERATE VELOCITIES FOR STARTUP RUN
 gen_vel                  = no
 gen-temp                 = 300
-gen-seed                 = -6373443
+gen-seed                 = -220496149
 
 ; OPTIONS FOR BONDS    
 constraints              = h-bonds

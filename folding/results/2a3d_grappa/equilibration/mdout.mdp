@@ -2,7 +2,7 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: seutelf (7137)
 ;	On host: cascade-123.cluster
-;	At date: Tue Feb 27 10:37:20 2024
+;	At date: Tue Feb 27 13:20:20 2024
 ;
 ;	Created by:
 ;	                      :-) GROMACS - gmx grompp, 2023 (-:
@@ -11,7 +11,7 @@
 ;	Data prefix:  /hits/fast/mbm/broszms/software/gromacs-2023-cascade
 ;	Working dir:  /hits/fast/mbm/seutelf/md_simulation/validate_grappa/folding/results/2a3d_grappa/equilibration
 ;	Command line:
-;	  gmx grompp -f npt.mdp -c nvt.gro -p pep.top -o npt.tpr
+;	  gmx grompp -f md.mdp -c npt.gro -t npt.trr -o md.tpr -p pep.top
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.
@@ -25,7 +25,7 @@ integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0
 dt                       = 0.002
-nsteps                   = 500000
+nsteps                   = 5000000
 ; For exact run continuation or redoing part of a run
 init-step                = 0
 ; Part index is updated automatically on checkpointing (keeps files separate)
@@ -61,20 +61,20 @@ rtpi                     = 0.05
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 50000
-nstvout                  = 50000
-nstfout                  = 0
+nstxout                  = 10000
+nstvout                  = 10000
+nstfout                  = 10000
 ; Output frequency for energies to log file and energy file
-nstlog                   = 50000
+nstlog                   = 1000
 nstcalcenergy            = 100
-nstenergy                = 50000
+nstenergy                = 1000
 ; Output frequency and precision for .xtc file
-nstxout-compressed       = 0
+nstxout-compressed       = 1000
 compressed-x-precision   = 1000
 ; This selects the subset of atoms for the compressed
 ; trajectory file. You can select multiple groups. By
 ; default, all atoms will be written.
-compressed-x-grps        = 
+compressed-x-grps        = System
 ; Selection of energy groups
 energygrps               = 
 
@@ -151,7 +151,7 @@ tau_p                    = 2.0
 compressibility          = 4.5e-5
 ref_p                    = 1.0
 ; Scaling of reference coordinates, No, All or COM
-refcoord_scaling         = com
+refcoord-scaling         = No
 
 ; OPTIONS FOR QMMM calculations
 QMMM                     = no
@@ -171,7 +171,7 @@ annealing-temp           =
 ; GENERATE VELOCITIES FOR STARTUP RUN
 gen_vel                  = no
 gen-temp                 = 300
-gen-seed                 = -99336
+gen-seed                 = 1778358143
 
 ; OPTIONS FOR BONDS    
 constraints              = h-bonds

@@ -83,5 +83,5 @@ if [ $(((END-START)/3600)) -lt $CYCLE ]
 then
         echo "last cycle was just $(((END-START)/3600))h long and therefore finito"
 else
-        sbatch -J $SLURM_JOB_NAME submit_continue.sh ${rundir} ${TASK_ID}
+        sbatch -J $SLURM_JOB_NAME submit_continue.sh ${TASK_ID} ${box_side}
 fi

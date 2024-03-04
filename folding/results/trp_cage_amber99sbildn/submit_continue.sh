@@ -54,7 +54,8 @@ gmx editconf -f pep.gro -o pep_box.gro -c -box $box_side $box_side $box_side -bt
 gmx solvate -cp pep_box.gro -p pep.top -o pep_solv.gro 
 
 gmx grompp -f ions.mdp -c pep_solv.gro -p pep.top -o pep_genion.tpr 
-echo "SOL" | gmx genion -s pep_genion.tpr -p pep.top -o pep_ion.gro -neutral 
+# echo "SOL" | gmx genion -s pep_genion.tpr -p pep.top -o pep_ion.gro -neutral
+echo "SOL" | gmx genion -s pep_genion.tpr -p pep.top -o pep_ion.gro -pname NA -nname CL -neutral -conc 0.065
 
 gmx grompp -f minim.mdp -c pep_ion.gro -p pep.top -o pep_min.tpr
 gmx mdrun -deffnm pep_min 
@@ -82,5 +83,5 @@ if [ $(((END-START)/3600)) -lt $CYCLE ]
 then
         echo "last cycle was just $(((END-START)/3600))h long and therefore finito"
 else
-        sbatch -J $SLURM_JOB_NAME submit_continue.sh ${rundir} ${TASK_ID}
+        sbatch -J $SLURM_JOB_NAME submit_continue.sh ${TASK_ID} ${box_side}
 fi
