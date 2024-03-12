@@ -62,7 +62,7 @@ def rmse_plot(traj_paths:List[str], ref_path:str, ff_name:str=None, ref_rmsd:flo
         prealigner = align.AlignTraj(u, u_ref, select="protein and name CA", in_memory=True).run()
         val = rms.RMSD(u, u_ref, select='name CA').run()
 
-        df = pd.DataFrame(val.rmsd, columns=['Frame', 'Time (ns)', 'C-alphas'])
+        df = pd.DataFrame(val.results.rmsd, columns=['Frame', 'Time (ns)', 'C-alphas'])
         times_micr_s = np.array(df['Frame']) * us_per_frame
         c_alpha_rmse = np.array(df['C-alphas'])
         # Uncomment the next line to apply rolling mean, if desired
