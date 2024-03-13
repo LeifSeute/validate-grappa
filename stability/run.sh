@@ -7,13 +7,16 @@ echo "PDBNAME: $PDBNAME"
 echo "GRAPPA_ENV: $GRAPPA_ENV"
 echo "FORCEFIELD: $FORCEFIELD"
 
+DIRNAME='results/'$PDBNAME'_'$FORCEFIELD
+
 # throw upon error:
 set -e
 
-mkdir $PDBNAME
-DIR=$PDBNAME/mdrun
+mkdir -p results
+mkdir $DIRNAME
+DIR=$DIRNAME/mdrun
 mkdir $DIR
-cp $PDBNAME.pdb $PDBNAME/mdrun/pep.pdb
+cp $PDBNAME.pdb $DIR/pep_with_water.pdb
 
 # create gmx files
 cp -r setup_template/runfiles_initial/* $DIR
@@ -30,6 +33,9 @@ source ~/.bashrc
 conda activate $GRAPPA_ENV
 
 pushd $DIR
+
+# remove water:
+grep -v HOH pep_with_water.pdb > pep.pdb
 
 # (the 6 1 flags are to select the amber99sbildn forcefield and water model)
 printf "6\n1\n "|gmx pdb2gmx -f pep.pdb -o pep.gro -p pep.top -ignh

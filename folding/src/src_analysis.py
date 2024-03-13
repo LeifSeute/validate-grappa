@@ -29,6 +29,16 @@ def rmse_plot(traj_paths:List[str], ref_path:str, ff_name:str=None, ref_rmsd:flo
     if len(traj_paths) == 0:
         print("No trajectories given")
         return
+    
+    FONTSIZE = 16
+    FONT = 'Arial'
+    plt.rc('font', family=FONT)
+    plt.rc('xtick', labelsize=FONTSIZE)
+    plt.rc('ytick', labelsize=FONTSIZE)
+    plt.rc('axes', labelsize=FONTSIZE)
+    plt.rc('legend', fontsize=FONTSIZE)
+
+    plt.figure(figsize=(6, 3))
 
     us_per_frame = 2e-3 # microseconds per frame (we write frames every 2ns)
     c_palette = [
@@ -74,14 +84,17 @@ def rmse_plot(traj_paths:List[str], ref_path:str, ff_name:str=None, ref_rmsd:flo
         max_ts = t_max if t_max > max_ts else max_ts
 
     if ref_rmsd:
-        plt.plot([0,max_ts],[ref_rmsd,ref_rmsd],label='Lindorff Larsen et al.',c='r')
+        plt.plot([0,max_ts],[ref_rmsd,ref_rmsd],label='Lindorff Larsen et al.',c='r', linestyle='--')
 
     # set the lower ylim to zero:
     plt.ylim(0, plt.ylim()[1]) 
 
+    # set the upper ylim to some manual value:
+    plt.ylim(0, 6)
+
     plt.xlabel("Time [μs]")
-    plt.ylabel("RMSD [Å]")
-    plt.title("C alpha RMSD to Experimental Structure" + "" if ff_name is None else f" with {ff_name}")
-    plt.legend()
+    plt.ylabel("C alpha RMSD [Å]")
+    # plt.title("C alpha RMSD to Experimental Structure" + "" if ff_name is None else f" with {ff_name}")
+    plt.legend(loc='upper right')
     figpath = "rmsd_to_ref.png" if figpath is None else figpath
     plt.savefig(figpath, dpi=500)

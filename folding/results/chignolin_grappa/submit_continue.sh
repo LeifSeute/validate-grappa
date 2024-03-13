@@ -55,6 +55,7 @@ gmx solvate -cp pep_box.gro -p pep.top -o pep_solv.gro
 
 gmx grompp -f ions.mdp -c pep_solv.gro -p pep.top -o pep_genion.tpr 
 echo "SOL" | gmx genion -s pep_genion.tpr -p pep.top -o pep_ion.gro -neutral 
+# echo "SOL" | gmx genion -s pep_genion.tpr -p pep.top -o pep_ion.gro -pname NA -nname CL -neutral -conc 0.065 # rather use this if you want add positive and negative ions to a specific concentration
 
 gmx grompp -f minim.mdp -c pep_ion.gro -p pep.top -o pep_min.tpr
 gmx mdrun -deffnm pep_min 

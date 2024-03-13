@@ -7,6 +7,8 @@ NAME=${1:-"chignolin"}
 REF_RMSD=0
 if [ "$NAME" == "chignolin" ]; then
     REF_RMSD=1
+elif [ "$NAME" == "chignolin_old" ]; then
+    REF_RMSD=1
 elif [ "$NAME" == "trp_cage" ]; then
     REF_RMSD=1.4
 elif [ "$NAME" == "protein_g" ]; then
@@ -27,7 +29,7 @@ MD_DIR=$BASE_DIR"/results/${NAME}_grappa/mds"
 # iterate over subdirs to process the trajectories:
 for subdir in $(ls $MD_DIR); do
     echo "Processing $subdir"
-    bash remove_pbc.sh $MD_DIR/$subdir Protein
+    # bash remove_pbc.sh $MD_DIR/$subdir Protein
 done
 
 mkdir -p $BASE_DIR/analysis
@@ -41,7 +43,7 @@ if [ -d $MD_DIR ]; then
     counter=0
     for subdir in $(ls $MD_DIR); do
         echo "Processing $subdir"
-        bash remove_pbc.sh $MD_DIR/$subdir Protein
+        # bash remove_pbc.sh $MD_DIR/$subdir Protein
         counter=$((counter+1))
     done
 
