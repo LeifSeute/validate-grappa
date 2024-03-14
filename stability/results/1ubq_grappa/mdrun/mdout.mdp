@@ -2,7 +2,7 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: seutelf (7137)
 ;	On host: cascade-002.cluster
-;	At date: Wed Mar 13 19:33:34 2024
+;	At date: Thu Mar 14 13:48:16 2024
 ;
 ;	Created by:
 ;	                      :-) GROMACS - gmx grompp, 2023 (-:
@@ -171,7 +171,7 @@ annealing-temp           =
 ; GENERATE VELOCITIES FOR STARTUP RUN
 gen_vel                  = no
 gen-temp                 = 300
-gen-seed                 = 2112744945
+gen-seed                 = -405152353
 
 ; OPTIONS FOR BONDS    
 constraints              = h-bonds

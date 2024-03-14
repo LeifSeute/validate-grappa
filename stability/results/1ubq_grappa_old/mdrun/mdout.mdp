@@ -2,14 +2,14 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: seutelf (7137)
 ;	On host: cascade-025.cluster
-;	At date: Thu Mar 14 13:49:00 2024
+;	At date: Thu Mar 14 13:22:58 2024
 ;
 ;	Created by:
 ;	                      :-) GROMACS - gmx grompp, 2023 (-:
 ;	
 ;	Executable:   /hits/fast/mbm/broszms/software/gromacs-2023-cascade/bin/gmx
 ;	Data prefix:  /hits/fast/mbm/broszms/software/gromacs-2023-cascade
-;	Working dir:  /hits/fast/mbm/seutelf/md_simulation/validate_grappa/stability/results/1ubq_amber99sbildn/mdrun
+;	Working dir:  /hits/fast/mbm/seutelf/md_simulation/validate_grappa/stability/results/1ubq_grappa/mdrun
 ;	Command line:
 ;	  gmx grompp -f md.mdp -c npt.gro -t npt.trr -o md.tpr -p pep.top
 
@@ -61,7 +61,7 @@ rtpi                     = 0.05
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 500
+nstxout                  = 10000
 nstvout                  = 10000
 nstfout                  = 10000
 ; Output frequency for energies to log file and energy file
@@ -171,7 +171,7 @@ annealing-temp           =
 ; GENERATE VELOCITIES FOR STARTUP RUN
 gen_vel                  = no
 gen-temp                 = 300
-gen-seed                 = -1143079171
+gen-seed                 = -1929719855
 
 ; OPTIONS FOR BONDS    
 constraints              = h-bonds

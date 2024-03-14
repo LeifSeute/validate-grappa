@@ -9,8 +9,15 @@ set -e
 
 # Navigate to the parent directory containing all MD simulation directories
 DIR=$1
+echo removing PBC from $DIR
 OUTPUT_GROUP=${2:-"System"} # set to Protein to only write the protein positions in the output file
 pushd "$DIR"
+
+# module load GCC/9.3.0
+# module load CUDA/11.5.0
+
+# module use /hits/fast/mbm/broszms/software/modules/
+# module load gromacs-2023-cuda-11.5
 
 # Loop through each child directory in the folder
 
