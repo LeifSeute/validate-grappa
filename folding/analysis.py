@@ -8,8 +8,9 @@ parser.add_argument('--ref', type=str, default='ref.pdb', help='reference struct
 parser.add_argument('--trjdir', type=str, default='trj', help='directory with trajectories', required=True)
 parser.add_argument('--ref_rmsd', type=float, default=None, help='reference rmsd in angstroem')
 parser.add_argument('--figpath', type=str, default="rmsd_to_ref.png", help='path to save figure')
+parser.add_argument('--amber', action='store_true', help='amber trajectory')
 
 args = parser.parse_args()
 
 traj_paths = get_traj_paths(args.trjdir)
-rmse_plot(traj_paths, ref_path=args.ref, ref_rmsd=args.ref_rmsd, figpath=args.figpath)
+rmse_plot(traj_paths, ref_path=args.ref, ref_rmsd=args.ref_rmsd, figpath=args.figpath, amber=args.amber)

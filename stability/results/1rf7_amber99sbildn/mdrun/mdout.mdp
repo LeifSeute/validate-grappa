@@ -1,15 +1,15 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: seutelf (7137)
-;	On host: cascade-025.cluster
-;	At date: Thu Mar 14 13:22:58 2024
+;	By user: unknown (7137)
+;	On host: cascade-140.cluster
+;	At date: Mon Mar 18 06:48:37 2024
 ;
 ;	Created by:
 ;	                      :-) GROMACS - gmx grompp, 2023 (-:
 ;	
 ;	Executable:   /hits/fast/mbm/broszms/software/gromacs-2023-cascade/bin/gmx
 ;	Data prefix:  /hits/fast/mbm/broszms/software/gromacs-2023-cascade
-;	Working dir:  /hits/fast/mbm/seutelf/md_simulation/validate_grappa/stability/results/1ubq_grappa/mdrun
+;	Working dir:  /hits/fast/mbm/seutelf/md_simulation/validate_grappa/stability/results/1rf7_amber99sbildn/mdrun
 ;	Command line:
 ;	  gmx grompp -f md.mdp -c npt.gro -t npt.trr -o md.tpr -p pep.top
 
@@ -24,8 +24,8 @@ define                   =
 integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0
-dt                       = 0.002
-nsteps                   = 50000000
+dt                       = 0.001
+nsteps                   = 100000000
 ; For exact run continuation or redoing part of a run
 init-step                = 0
 ; Part index is updated automatically on checkpointing (keeps files separate)
@@ -61,7 +61,7 @@ rtpi                     = 0.05
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 10000
+nstxout                  = 1000
 nstvout                  = 10000
 nstfout                  = 10000
 ; Output frequency for energies to log file and energy file
@@ -82,7 +82,7 @@ energygrps               =
 ; cut-off scheme (Verlet: particle based cut-offs)
 cutoff-scheme            = Verlet
 ; nblist update frequency
-nstlist                  = 10
+nstlist                  = 5
 ; Periodic boundary conditions: xyz, no, xy
 pbc                      = xyz
 periodic-molecules       = no
@@ -134,7 +134,7 @@ ensemble-temperature-setting = auto
 ensemble-temperature     = -1
 ; Temperature coupling  
 tcoupl                   = V-rescale
-nsttcouple               = 20
+nsttcouple               = 10
 nh-chain-length          = 10
 print-nose-hoover-chain-variables = no
 ; Groups to couple separately
@@ -145,7 +145,7 @@ ref_t                    = 300     300
 ; pressure coupling     
 pcoupl                   = Parrinello-Rahman
 pcoupltype               = isotropic
-nstpcouple               = 20
+nstpcouple               = 10
 ; Time constant (ps), compressibility (1/bar) and reference P (bar)
 tau_p                    = 2.0
 compressibility          = 4.5e-5
@@ -171,7 +171,7 @@ annealing-temp           =
 ; GENERATE VELOCITIES FOR STARTUP RUN
 gen_vel                  = no
 gen-temp                 = 300
-gen-seed                 = -1929719855
+gen-seed                 = -624984577
 
 ; OPTIONS FOR BONDS    
 constraints              = h-bonds

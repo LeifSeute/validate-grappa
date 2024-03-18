@@ -1,17 +1,17 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: seutelf (7137)
-;	On host: cascade-025.cluster
-;	At date: Wed Mar 13 19:53:37 2024
+;	By user: unknown (7137)
+;	On host: cascade-035.cluster
+;	At date: Mon Mar 18 06:45:03 2024
 ;
 ;	Created by:
 ;	                      :-) GROMACS - gmx grompp, 2023 (-:
 ;	
 ;	Executable:   /hits/fast/mbm/broszms/software/gromacs-2023-cascade/bin/gmx
 ;	Data prefix:  /hits/fast/mbm/broszms/software/gromacs-2023-cascade
-;	Working dir:  /hits/fast/mbm/seutelf/md_simulation/validate_grappa/stability/results/1ubq_amber99sbildn/mdrun
+;	Working dir:  /hits/fast/mbm/seutelf/md_simulation/validate_grappa/stability/results/1rf7_grappa/mdrun
 ;	Command line:
-;	  gmx grompp -f md.mdp -c npt.gro -t npt.trr -o md.tpr -p pep.top
+;	  gmx grompp -f nvt.mdp -c pep_out_min.gro -p pep.top -o nvt.tpr
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.
@@ -24,8 +24,8 @@ define                   =
 integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0
-dt                       = 0.002
-nsteps                   = 50000000
+dt                       = 0.001
+nsteps                   = 500000
 ; For exact run continuation or redoing part of a run
 init-step                = 0
 ; Part index is updated automatically on checkpointing (keeps files separate)
@@ -61,20 +61,20 @@ rtpi                     = 0.05
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 10000
-nstvout                  = 10000
-nstfout                  = 10000
+nstxout                  = 5000
+nstvout                  = 5000
+nstfout                  = 0
 ; Output frequency for energies to log file and energy file
-nstlog                   = 1000
+nstlog                   = 5000
 nstcalcenergy            = 100
-nstenergy                = 1000
+nstenergy                = 5000
 ; Output frequency and precision for .xtc file
-nstxout-compressed       = 1000
+nstxout-compressed       = 0
 compressed-x-precision   = 1000
 ; This selects the subset of atoms for the compressed
 ; trajectory file. You can select multiple groups. By
 ; default, all atoms will be written.
-compressed-x-grps        = System
+compressed-x-grps        = 
 ; Selection of energy groups
 energygrps               = 
 
@@ -82,7 +82,7 @@ energygrps               =
 ; cut-off scheme (Verlet: particle based cut-offs)
 cutoff-scheme            = Verlet
 ; nblist update frequency
-nstlist                  = 10
+nstlist                  = 5
 ; Periodic boundary conditions: xyz, no, xy
 pbc                      = xyz
 periodic-molecules       = no
@@ -134,7 +134,7 @@ ensemble-temperature-setting = auto
 ensemble-temperature     = -1
 ; Temperature coupling  
 tcoupl                   = V-rescale
-nsttcouple               = 20
+nsttcouple               = 10
 nh-chain-length          = 10
 print-nose-hoover-chain-variables = no
 ; Groups to couple separately
@@ -143,13 +143,13 @@ tc-grps                  = Protein Non-Protein
 tau_t                    = 0.1     0.1
 ref_t                    = 300     300
 ; pressure coupling     
-pcoupl                   = Parrinello-Rahman
-pcoupltype               = isotropic
-nstpcouple               = 20
+pcoupl                   = no
+pcoupltype               = Isotropic
+nstpcouple               = -1
 ; Time constant (ps), compressibility (1/bar) and reference P (bar)
-tau_p                    = 2.0
-compressibility          = 4.5e-5
-ref_p                    = 1.0
+tau-p                    = 1
+compressibility          = 
+ref-p                    = 
 ; Scaling of reference coordinates, No, All or COM
 refcoord-scaling         = No
 
@@ -169,16 +169,16 @@ annealing-time           =
 annealing-temp           = 
 
 ; GENERATE VELOCITIES FOR STARTUP RUN
-gen_vel                  = no
-gen-temp                 = 300
-gen-seed                 = -287862819
+gen_vel                  = yes
+gen_temp                 = 300
+gen_seed                 = 1599593183
 
 ; OPTIONS FOR BONDS    
 constraints              = h-bonds
 ; Type of constraint algorithm
 constraint_algorithm     = lincs
 ; Do not constrain the start configuration
-continuation             = yes
+continuation             = no
 ; Use successive overrelaxation to reduce the number of shake iterations
 Shake-SOR                = no
 ; Relative tolerance of shake

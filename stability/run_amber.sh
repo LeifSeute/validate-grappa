@@ -11,7 +11,7 @@ module use /hits/fast/mbm/broszms/software/modules/
 module load gromacs-2023-cuda-11.5
 
 
-bash run.sh $PDBNAME $GRAPPA_ENV $FORCEFIELD
+# bash run.sh $PDBNAME $GRAPPA_ENV $FORCEFIELD
 
 PDBNAME=1rf7
 

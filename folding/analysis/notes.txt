@@ -1,0 +1,17 @@
+save the image via:
+
+Using the Tk Console
+Open the Tk Console: In VMD, go to Extensions > Tk Console to open the console if it isn't already open.
+
+
+display rendermode GLSL
+display culling on
+display projection Orthographic
+display depthcue off
+color Display Background white
+axes location Off
+
+then open File -> render and replace .tga by .png
+
+
+(size of current screen determines resolution and shape)

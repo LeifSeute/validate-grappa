@@ -1,25 +1,15 @@
 #!/bin/bash
-PDBNAME=$1 #4-letter-code
+
+PEPGEN_ENV=$1
 GRAPPA_ENV=$2
 FORCEFIELD=$3 # can be amber99sbildn or grappa
 
-echo "PDBNAME: $PDBNAME"
+echo "PEPGEN_ENV: $PEPGEN_ENV"
 echo "GRAPPA_ENV: $GRAPPA_ENV"
 echo "FORCEFIELD: $FORCEFIELD"
 
-DIRNAME='results/'$PDBNAME'_'$FORCEFIELD
-
 # throw upon error:
 set -e
-
-mkdir -p results
-mkdir $DIRNAME
-DIR=$DIRNAME/mdrun
-mkdir $DIR
-cp $PDBNAME.pdb $DIR/pep_with_water.pdb
-
-# create gmx files
-cp -r setup_template/runfiles_initial/* $DIR
 
 # check if forcefield is valid
 if [ $FORCEFIELD != "amber99sbildn" ] && [ $FORCEFIELD != "grappa" ]; then
@@ -27,18 +17,36 @@ if [ $FORCEFIELD != "amber99sbildn" ] && [ $FORCEFIELD != "grappa" ]; then
     exit 1
 fi
 
+module load GCC/9.3.0
+module load CUDA/11.5.0
+
+module use /hits/fast/mbm/broszms/software/modules/
+module load gromacs-2023-cuda-11.5
+
+FASTA='pep.fasta'
+
+# name of the fasta file:
+DIR=equilibration
 
 source ~/.bashrc
 
+# set up pepgen
+conda activate $PEPGEN_ENV
+echo $CONDA_PREFIX
+
+echo "fasta filename:"
+echo $FASTA
+seq=$( tail -n 1 $FASTA )
+echo $seq
+
+# run pepgen in uncapped mode:
+pepgen $seq $DIR -t
+
 conda activate $GRAPPA_ENV
 
+# create gmx files
+cp -r runfiles_initial/* $DIR/
 pushd $DIR
-
-# remove water:
-grep -v HOH pep_with_water.pdb > pep_with_hetatm.pdb
-
-# remove all HETATMS:
-grep -v HETATM pep_with_hetatm.pdb > pep.pdb
 
 # (the 6 1 flags are to select the amber99sbildn forcefield and water model)
 printf "6\n1\n "|gmx pdb2gmx -f pep.pdb -o pep.gro -p pep.top -ignh
@@ -56,5 +64,5 @@ cp pep.top pep_unsolvated.top
 # run mds
 bash quick_gmx.sh
 
-echo "Done!"
+echo "Done with equilibration! Now pick a structure that fits in the box described in the folding paper SI (different for every protein)."
 popd
