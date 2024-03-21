@@ -1,6 +1,6 @@
 #!bin/bash
 
-set -e
+# set -e
 
 NAME=${1:-"chignolin"}
 
@@ -36,12 +36,13 @@ MD_DIR=$BASE_DIR"/results/${NAME}_grappa/mds"
 # iterate over subdirs to process the trajectories:
 for subdir in $(ls $MD_DIR); do
     echo "Processing $subdir"
-    # bash remove_pbc.sh $MD_DIR/$subdir Protein
+    bash remove_pbc.sh $MD_DIR/$subdir Protein
 done
 
 mkdir -p $BASE_DIR/analysis
 
-python analysis.py --ref $BASE_DIR/references/${NAME}.pdb --trjdir $MD_DIR --ref_rmsd $REF_RMSD --figpath $BASE_DIR/analysis/${NAME}_grappa_ref_rmsd.png
+# python analysis.py --ref $BASE_DIR/references/${NAME}.pdb --trjdir $MD_DIR --ref_rmsd $REF_RMSD --figpath $BASE_DIR/analysis/${NAME}_grappa_ref_rmsd.png #-- clustering
+python analysis.py --ref $BASE_DIR/references/${NAME}.pdb --trjdir $MD_DIR --figpath $BASE_DIR/analysis/${NAME}_grappa_ref_rmsd.png #-- clustering
 
 
 # if Base dir / results/name_amber/mds exists and contains at least one subfolder, process it as well:
@@ -50,13 +51,14 @@ if [ -d $MD_DIR ]; then
     counter=0
     for subdir in $(ls $MD_DIR); do
         echo "Processing $subdir"
-        # bash remove_pbc.sh $MD_DIR/$subdir Protein
+        bash remove_pbc.sh $MD_DIR/$subdir Protein
         counter=$((counter+1))
     done
 
     if [ $counter -eq 0 ]; then
         echo "No subfolders found in $MD_DIR"
     else
-        python analysis.py --ref $BASE_DIR/references/${NAME}.pdb --trjdir $MD_DIR --ref_rmsd $REF_RMSD --figpath $BASE_DIR/analysis/${NAME}_amber99sbildn_ref_rmsd.png --amber
+        # python analysis.py --ref $BASE_DIR/references/${NAME}.pdb --trjdir $MD_DIR --ref_rmsd $REF_RMSD --figpath $BASE_DIR/analysis/${NAME}_amber99sbildn_ref_rmsd.png --amber #-- clustering
+        python analysis.py --ref $BASE_DIR/references/${NAME}.pdb --trjdir $MD_DIR --figpath $BASE_DIR/analysis/${NAME}_amber99sbildn_ref_rmsd.png --amber #-- clustering
     fi
 fi

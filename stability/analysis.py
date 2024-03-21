@@ -7,12 +7,17 @@ import numpy as np
 from pathlib import Path
 import os
 
-PDBNAME = '1rf7'
+PDBNAME = '1ubq'
 
 FONT = 'Arial'
 FONTSIZE = 18
 
-FIGSIZE = (6, 4)
+GRAPPA_COLOR = '#1f77b4'
+AMBER_COLOR = '#e41a1c'
+
+MAX_TIME = 100 # ns
+
+FIGSIZE = (9, 3.5)
 
 N = 1000  # Number of points to sample
 dt_ns = 2  # Duration in nanoseconds to calculate RMSD
@@ -43,44 +48,22 @@ u_grappa = mda.Universe(pep_file_grappa, trj_file_grappa)
 u_amber = mda.Universe(pep_file_amber, trj_file_amber)
 
 
-ref = mda.Universe(experimental_structure)
 
-try:
-        
-    # Align to the reference structure
-    align.AlignTraj(u_grappa, ref, select='protein and name CA', in_memory=True).run()
-    align.AlignTraj(u_amber, ref, select='protein and name CA', in_memory=True).run()
-
-    # Calculate RMSD to the reference
-    rmsd_grappa = rms.RMSD(u_grappa, ref, select='protein and name CA').run()
-    rmsd_amber = rms.RMSD(u_amber, ref, select='protein and name CA').run()
-
-    # Plotting RMSD to reference structure
-
-    plt.figure(figsize=FIGSIZE)
-    plt.plot(rmsd_grappa.times/1e3, rmsd_grappa.rmsd[:, 2], label='Grappa')
-    plt.plot(rmsd_amber.times/1e3, rmsd_amber.rmsd[:, 2], label='Amber')
-    plt.xlabel('Time (ns)')
-    plt.ylabel('RMSD (Å)')
-    # plt.title('RMSD to Experimental Structure')
-    plt.legend(frameon=False)
-    plt.savefig(f'rmsd_to_reference_comparison_{PDBNAME}.png', dpi=400, bbox_inches='tight')
-    plt.close()  # Or plt.show() for interactive use
-
-except:
-    print('RMSD to ref analysis failed')
-
-#%%
+fig, ax = plt.subplots(2, 1, figsize=(FIGSIZE[0], 2*FIGSIZE[1]))
 
 # Select the atoms you're interested in, e.g., all backbone atoms of the protein
 # Adjust the selection as needed
+
+
 protein_grappa = u_grappa.select_atoms('protein and name CA')
 
 protein_amber = u_amber.select_atoms('protein and name CA')
+time_step_ns = u_grappa.trajectory.dt / 1e3  # Convert to ns
 
 # Initialize the RMSD analysis
 # The reference is the first frame of the trajectory by default
-try:
+recalc = False
+if recalc:
     rmsd_analysis = rms.RMSD(protein_grappa, protein_grappa, ref_frame=0)
 
     rmsd_analysis_amber = rms.RMSD(protein_amber, protein_amber, ref_frame=0)
@@ -89,6 +72,12 @@ try:
     rmsd_analysis.run()
 
     rmsd_analysis_amber.run()
+
+    # moving average over dt_avg ns
+    dt_avg = 0.05  # ns
+    n_avg = int(dt_avg / time_step_ns)
+    rmsd_analysis.results.rmsd[:, 2] = np.convolve(rmsd_analysis.results.rmsd[:, 2], np.ones(n_avg)/n_avg, mode='same')
+    rmsd_analysis_amber.results.rmsd[:, 2] = np.convolve(rmsd_analysis_amber.results.rmsd[:, 2], np.ones(n_avg)/n_avg, mode='same')
 
     # rmsd_analysis.results.rmsd contains the results
     # Column 0 is the frame number, column 1 is the time, and column 2 is the RMSD
@@ -99,22 +88,41 @@ try:
     times_amber = rmsd_analysis_amber.results.rmsd[:, 1]/1e3
     rmsd_amber = rmsd_analysis_amber.results.rmsd[:, 2]
 
-    # Plot the RMSD over time
-    plt.figure(figsize=FIGSIZE)
-    plt.plot(times_grappa, rmsd_grappa, label='Grappa')
-    plt.plot(times_amber, rmsd_amber, label='Amber')
-    # plt.ylim(0, 5)
-    plt.xlabel('Time (ns)')
-    plt.ylabel('RMSD (Å)')
-    # plt.title('RMSD to the First Frame')
-    plt.legend(frameon=False)
+times_grappa = times_grappa[times_grappa <= MAX_TIME]
+rmsd_grappa = rmsd_grappa[times_grappa <= MAX_TIME]
 
-    plt.savefig(f'rmsd_to_first_frame_{PDBNAME}.png', dpi=400, bbox_inches='tight')
-    # plt.show()
-    plt.close()
-except:
-    print('RMSD to first frame analysis failed')
-# %%
+times_amber = times_amber[times_amber <= MAX_TIME]
+rmsd_amber = rmsd_amber[times_amber <= MAX_TIME]
+
+# delete the non-convoluted frames:
+times_grappa = times_grappa[:-n_avg]
+rmsd_grappa = rmsd_grappa[:-n_avg]
+times_amber = times_amber[:-n_avg]
+rmsd_amber = rmsd_amber[:-n_avg]
+
+
+# Plot the RMSD over time
+ax[0].plot(times_amber, rmsd_amber, label='FF99SBILDN', color=AMBER_COLOR)
+ax[0].plot(times_grappa, rmsd_grappa, label='Grappa', color=GRAPPA_COLOR)
+ax[0].set_ylim(0, 5.5)
+ax[0].set_xlim(0, MAX_TIME)
+ax[0].set_xlabel('Time [ns]')
+ax[0].set_ylabel('RMSD [Å]')
+# plt.title('RMSD to the First Frame')
+
+n_ticks_x = 4
+n_ticks_y = 2
+
+ax[0].xaxis.set_major_locator(plt.MaxNLocator(n_ticks_x))
+ax[0].yaxis.set_major_locator(plt.MaxNLocator(n_ticks_y))
+
+ax[0].legend(frameon=False, loc='upper left')
+# invert the order of the legend:
+handles, labels = ax[0].get_legend_handles_labels()
+ax[0].legend(handles[::-1], labels[::-1], frameon=False, loc='upper left')
+
+# fig.save(f'rmsd_to_first_frame_{PDBNAME}.png', dpi=400, bbox_inches='tight')
+
 
 if not Path('rmsd_data.npy').exists():
 
@@ -131,7 +139,7 @@ if not Path('rmsd_data.npy').exists():
 
     # Time step in ps, assuming constant time step throughout the trajectory
     time_step = u_grappa.trajectory.dt
-    frames_per_ns = int(dt_ps / time_step)
+    frames_per_dt = int(dt_ps / time_step)
 
     # Store all RMSD curves
     all_rmsds = []
@@ -143,7 +151,7 @@ if not Path('rmsd_data.npy').exists():
     print(f'Total number of frames: {min_frames}\n')
 
     # pick N points with replacement:
-    idxs = np.random.choice(range(min_frames - frames_per_ns), N, replace=False)
+    idxs = np.random.choice(range(min_frames - frames_per_dt), N, replace=False)
     for i, start_frame in enumerate(idxs):
         print(f'Processing Interval {i + 1}/{len(idxs)}', end='\r')
         u_grappa.trajectory[start_frame]  # Set the current frame as reference
@@ -155,7 +163,7 @@ if not Path('rmsd_data.npy').exists():
         rmsds_amber = []
         
         # Calculate RMSD for the next nanosecond
-        for i in range(start_frame, start_frame + frames_per_ns):
+        for i in range(start_frame, start_frame + frames_per_dt):
             u_grappa.trajectory[i]
             rmsd = rms.rmsd(ref_positions, protein_grappa.positions, superposition=True)
             rmsds.append(rmsd)
@@ -208,19 +216,33 @@ else:
     rmsd_25th_amber = data.item().get('rmsd_25th_amber')
     rmsd_75th_amber = data.item().get('rmsd_75th_amber')
 
+time_axis = time_axis / 1000  # convert to ns
 
 # Plotting
-plt.figure(figsize=FIGSIZE)
-plt.plot(time_axis, rmsd_mean_amber, label='AmberFF', color='#e41a1c')
-plt.fill_between(time_axis, rmsd_25th_amber, rmsd_75th_amber, alpha=0.6, color='#e41a1c', linewidth=0.0)
-plt.plot(time_axis, rmsd_mean, label='Grappa', color='#1f77b4')
-plt.fill_between(time_axis, rmsd_25th, rmsd_75th, alpha=0.6, color='#1f77b4', linewidth=0.0)
-plt.xlabel(r'$\Delta t$ (ps)')
-plt.ylabel(r'RMSD $[t + \Delta t]$ (Å)')
+ax[1].plot(time_axis, rmsd_mean_amber, label='FF99SBILDN', color=AMBER_COLOR, linewidth=2.5)
+ax[1].fill_between(time_axis, rmsd_25th_amber, rmsd_75th_amber, alpha=0.35, color=AMBER_COLOR, linewidth=0.0)
+ax[1].plot(time_axis, rmsd_mean, label='Grappa', color=GRAPPA_COLOR, linewidth=2.5)
+ax[1].fill_between(time_axis, rmsd_25th, rmsd_75th, alpha=0.35, color=GRAPPA_COLOR, linewidth=0.0)
+ax[1].set_xlabel(r'$\Delta t$ [ns]')
+ax[1].set_ylabel(r'RMSD $(t + \Delta t)$ [Å]')
 # plt.title('RMSD Over Time Interval')
-plt.legend(frameon=False, loc='lower right')
-plt.savefig(f'rmsd_over_time_{PDBNAME}.png', dpi=400, bbox_inches='tight')
+
+ax[1].legend(frameon=False, loc='lower right')
+# invert the order of the legend:
+handles, labels = ax[0].get_legend_handles_labels()
+ax[1].legend(handles[::-1], labels[::-1], frameon=False, loc='lower right')
+
+# only use n ticks:
+n_ticks = 4
+n_yticks = 2
+
+ax[1].xaxis.set_major_locator(plt.MaxNLocator(n_ticks))
+ax[1].yaxis.set_major_locator(plt.MaxNLocator(n_yticks))
+
+fig.tight_layout(pad=2)
+
+plt.savefig(f'rmsd_{PDBNAME}.png', dpi=400, bbox_inches='tight')
 # plt.show()
-plt.close()
+# plt.close()
 
 # %%

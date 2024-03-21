@@ -4,7 +4,7 @@ integrator              = md        ; leap-frog integrator
 nsteps                  = 500000     ; 2 * 500000 = 1000 ps
 dt                      = 0.001     ; 2 fs
 ; Output control
-nstxout                 = 5000       ; save coordinates every 1.0 ps
+nstxout                 = 50       ; save coordinates every 1.0 ps
 nstvout                 = 5000       ; save velocities every 1.0 ps
 nstenergy               = 5000       ; save energies every 1.0 ps
 nstlog                  = 5000       ; update log file every 1.0 ps
@@ -30,7 +30,7 @@ tcoupl                  = V-rescale             ; modified Berendsen thermostat
 tc-grps                 = Protein Non-Protein   ; two coupling groups - more accurate
 tau_t                   = 0.1     0.1           ; time constant, in ps
 ref_t                   = 300     300           ; reference temperature, one for each group, in K
-nsttcouple              = 10                    ; same as nstlist
+nsttcouple              = 5                    ; same as nstlist
 ; Pressure coupling is off
 pcoupl                  = no        ; no pressure coupling in NVT
 ; Periodic boundary conditions

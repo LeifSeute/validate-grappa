@@ -41,19 +41,24 @@ ref.atoms.write(str(ref_centered_path))
 rmsd_values = []
 with mda.Writer(aligned_trj_path, u.atoms.n_atoms) as W:
     for ts in u.trajectory:
-        align.alignto(u, ref, select="protein and name CA", weights="mass")
+        align.alignto(u, ref, select="protein and name CA")
 
         rmsd_val = rmsd(u.select_atoms("protein and name CA").positions, ref.select_atoms("protein and name CA").positions, superposition=False)
         rmsd_values.append(rmsd_val)
         W.write(u.atoms)
 
 starting_frame_path = str(Path(f"{NAME}_cluster_center.pdb"))
-if not Path(starting_frame_path).exists():
+if not args.image or not Path(starting_frame_path).exists():
     starting_frame_path = str(trj_path.parent / "min_rmsd_frame.pdb")
     min_rmsd_index = rmsd_values.index(min(rmsd_values))
     u.trajectory[min_rmsd_index]
-    align.alignto(u, ref, select="protein and name CA", weights="mass")
+    align.alignto(u, ref, select="protein and name CA")
     u.atoms.write(starting_frame_path)
+else:
+    starting_universe = mda.Universe(starting_frame_path)
+    align.alignto(starting_universe, ref, select="protein and name CA")
+
+    starting_universe.atoms.write(starting_frame_path)
 
 # VMD script content
 vmd_script_content = f"""
@@ -63,7 +68,19 @@ vmd_script_content = f"""
 mol new {ref_centered_path} type pdb
 mol modstyle 0 top NewCartoon
 mol modcolor 0 top ColorID 0
+"""
 
+if args.image:
+    vmd_script_content += f"""
+
+# Load the molecule and the aligned trajectory
+mol new {starting_frame_path} type pdb
+mol modstyle 0 top NewCartoon
+mol modcolor 0 top ColorID 1
+"""
+else:
+    vmd_script_content += f"""
+    
 # Load the molecule and the aligned trajectory
 mol new {starting_frame_path} type pdb
 mol modstyle 0 top NewCartoon
@@ -103,8 +120,8 @@ molinfo 1 set {{center_matrix}} {{{center_matrix}}}
 """
 
 if "chignolin" in NAME:
-    ROTATE_MATRIX = "{{-0.0751445 0.064537 -0.20622 0} {-0.211992 -0.0643002 0.0571251 0} {-0.041846 0.209855 0.0809225 0} {0 0 0 1}}"
-    GLOBAL_MATRIX = "{{1 0 0 0.08} {0 1 0 -0.28} {0 0 1 0} {0 0 0 1}}"
+    ROTATE_MATRIX = "{{-0.107528 0.135811 -0.149437 0} {-0.201915 -0.074426 0.0776492 0} {-0.0025197 0.168389 0.154847 0} {0 0 0 1}}"
+    GLOBAL_MATRIX = "{{1 0 0 0.07} {0 1 0 -0.19} {0 0 1 0} {0 0 0 1}}"
     SCALE_MATRIX = "{{1 0 0 0} {0 1 0 0} {0 0 1 0} {0 0 0 1}}"
     CENTER_MATRIX = "{{1 0 0 0.670732} {0 1 0 0.371891} {0 0 1 0.702051} {0 0 0 1}}"
     vmd_script_content += reproduce_camera_setting(ROTATE_MATRIX, GLOBAL_MATRIX, SCALE_MATRIX, CENTER_MATRIX)
